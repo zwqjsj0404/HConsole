@@ -38,8 +38,8 @@ public class HadoopConsole {
 	static {
 		commandMap.put("fs", Lists.newArrayList("-fs", "-conf", "-D", "-jt",
 				"-files", "-libjars", "-archives", "-ls", "-lsr", "-du",
-				"-dus", "-count", "-mv", "-cp", "-rm", "-rmr", "-expunge",
-				"-put", "-copyFromLocal", "-moveFromLocal", "-get",
+				"-dus", "-count", "-mv", "-mkdir", "-cp", "-rm", "-rmr",
+				"-expunge", "-put", "-copyFromLocal", "-moveFromLocal", "-get",
 				"-getmerge", "-cat", "-text", "-copyToLocal", "-chmod",
 				"-chown", "-chgrp", "-help"));
 		commandMap.put("namenode", Lists.newArrayList("-c", "-d"));
