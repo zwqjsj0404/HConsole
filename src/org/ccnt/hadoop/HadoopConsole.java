@@ -41,7 +41,7 @@ public class HadoopConsole {
 				"-dus", "-count", "-mv", "-mkdir", "-cp", "-rm", "-rmr",
 				"-expunge", "-put", "-copyFromLocal", "-moveFromLocal", "-get",
 				"-getmerge", "-cat", "-text", "-copyToLocal", "-chmod",
-				"-chown", "-chgrp", "-help"));
+				"-chown", "-chgrp", "-help", "-touchz"));
 		commandMap.put("namenode", Lists.newArrayList("-c", "-d"));
 		commandMap.put("secondarynamenode", Lists.newArrayList("-c", "-d"));
 		commandMap.put("datanode", Lists.newArrayList("-c", "-d"));
