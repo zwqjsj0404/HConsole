@@ -20,10 +20,10 @@ package org.ccnt.hadoop;
 
 import java.util.List;
 
-import jline.Completor;
-import jline.ConsoleReader;
+import jline.console.completer.Completer;
+import jline.console.ConsoleReader;
 
-class ArgsCompletor implements Completor {
+class ArgsCompletor implements Completer {
 	private HadoopConsole hConsole;
 	private ConsoleReader reader;
 
@@ -46,7 +46,7 @@ class ArgsCompletor implements Completor {
 		buffer = buffer.substring(0, cursor);
 
 		// gaoxiao
-		// 获取前一个命令:preCmd
+		// 锟斤拷取前一锟斤拷锟斤拷锟斤拷:preCmd
 		String[] buffers = reader.getCursorBuffer().toString().split("\\s");
 		int prevIndex = buffers.length - 2;
 		if (buffer == "") {

@@ -20,9 +20,10 @@ package org.ccnt.hadoop;
 
 import java.util.List;
 
-import jline.Completor;
+import jline.console.completer.Completer;
+import jline.console.ConsoleReader;
 
-class HadoopCompletor implements Completor {
+class HadoopCompletor implements Completer {
 	private HadoopConsole hConsole;
 
 	public HadoopCompletor(HadoopConsole hConsole) {
