@@ -24,7 +24,7 @@ import sun.misc.SignalHandler;
 import com.google.common.collect.Lists;
 
 /**
- * �ṩhadoop���������Զ���ȫ����
+ * the console for hadoop
  * 
  * @author gaoxiao
  * 
@@ -138,6 +138,8 @@ public class HadoopConsole {
 		List completors = new LinkedList();
 		completors.add(new HadoopCompletor(hConsole));
 		completors.add(new ArgsCompletor(hConsole, reader));
+//		FileNameCompleter fileNameCompleter = new FileNameCompleter();
+//		fileNameCompleter.
 		completors.add(new FileNameCompleter());
 		reader.addCompleter(new ArgumentCompleter(completors));
 

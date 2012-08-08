@@ -18,8 +18,10 @@
 
 package org.ccnt.hadoop;
 
+import java.util.Iterator;
 import java.util.List;
 
+import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
 import jline.console.ConsoleReader;
 
@@ -27,12 +29,9 @@ class ArgsCompletor implements Completer {
 	private HadoopConsole hConsole;
 	private ConsoleReader reader;
 
-	public ArgsCompletor(HadoopConsole hConsole) {
-		this.hConsole = hConsole;
-	}
-
-	public ArgsCompletor(HadoopConsole hConsole2, ConsoleReader reader) {
+	public ArgsCompletor(HadoopConsole hConsole, ConsoleReader reader) {
 		this.reader = reader;
+		this.hConsole = hConsole;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -46,12 +45,22 @@ class ArgsCompletor implements Completer {
 		buffer = buffer.substring(0, cursor);
 
 		// gaoxiao
-		// ��ȡǰһ������:preCmd
-		String[] buffers = reader.getCursorBuffer().toString().split("\\s");
+		// get pre Cmd
+		// String[] buffers = reader.getCursorBuffer().toString().split("\\s");
+
+		String preBuf = reader.getCursorBuffer().toString();
+		String[] buffers = preBuf.split("\\s");
+		ArgumentCompleter argumentCompleter = (ArgumentCompleter) reader
+				.getCompleters().toArray()[0];
+
 		int prevIndex = buffers.length - 2;
 		if (buffer == "") {
 			prevIndex = buffers.length - 1;
 		}
+		if (prevIndex < 0) {
+			prevIndex = 0;
+		}
+		// System.out.println(prevIndex);
 		String preCmd = buffers[prevIndex];
 		String token = "";
 		if (!buffer.endsWith(" ")) {
@@ -62,9 +71,6 @@ class ArgsCompletor implements Completer {
 			}
 		}
 
-		// if (token.startsWith("/")) {
-		// return completeZNode(buffer, token, candidates);
-		// }
 		return completeCommand(buffer, token, candidates, preCmd);
 	}
 
@@ -79,32 +85,10 @@ class ArgsCompletor implements Completer {
 					candidates.add(cmd);
 				}
 			}
+		} else {
+			candidates.add("");
 		}
 
 		return buffer.lastIndexOf(" ") + 1;
 	}
-
-	// private int completeZNode(String buffer, String token,
-	// List<String> candidates) {
-	// String path = token;
-	// int idx = path.lastIndexOf("/") + 1;
-	// String prefix = path.substring(idx);
-	// try {
-	// // Only the root path can end in a /, so strip it off every other
-	// // prefix
-	// String dir = idx == 1 ? "/" : path.substring(0, idx - 1);
-	// List<String> children = zk.getChildren(dir, false);
-	// for (String child : children) {
-	// if (child.startsWith(prefix)) {
-	// candidates.add(child);
-	// }
-	// }
-	// } catch (InterruptedException e) {
-	// return 0;
-	// } catch (KeeperException e) {
-	// return 0;
-	// }
-	// return candidates.size() == 0 ? buffer.length() : buffer
-	// .lastIndexOf("/") + 1;
-	// }
 }
