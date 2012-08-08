@@ -15,6 +15,7 @@ import jline.console.completer.FileNameCompleter;
 import jline.console.history.FileHistory;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FsShell;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -32,6 +33,12 @@ import com.google.common.collect.Lists;
 public class HadoopConsole {
 
 	public static final Map<String, ArrayList<String>> commandMap = new HashMap<String, ArrayList<String>>();
+
+	private static FsShell shell = new FsShell(new Configuration());
+
+	public static FsShell getShell() {
+		return shell;
+	}
 
 	static final String HISTORYFILE = ".hadoop_history";
 	static String historyFile = System.getProperty("user.home")
@@ -109,7 +116,7 @@ public class HadoopConsole {
 
 		final FileHistory history = new FileHistory(new File(historyFile));
 		reader.setHistory(history);
-		//处理日志
+		// 处理日志
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try {
@@ -118,14 +125,14 @@ public class HadoopConsole {
 				}
 			}
 		});
-		
-		
-		//处理信号量
+
+		// 处理信号量
 		SignalHandler handler = new SignalHandler() {
-			
+
 			public void handle(Signal signal) {
 				if (StringUtils.isEmpty(reader.getCursorBuffer().toString())) {
-					System.out.print("\nType quit or exit, or use Ctrl + d to get out!");
+					System.out
+							.print("\nType quit or exit, or use Ctrl + d to get out!");
 					System.out.print("\n" + reader.getPrompt());
 				} else {
 					reader.getCursorBuffer().clear();
@@ -137,14 +144,12 @@ public class HadoopConsole {
 
 		List completors = new LinkedList();
 		completors.add(new HadoopCompletor(hConsole));
-		completors.add(new ArgsCompletor(hConsole, reader));
-//		FileNameCompleter fileNameCompleter = new FileNameCompleter();
-//		fileNameCompleter.
-		completors.add(new FileNameCompleter());
+		completors.add(new ArgsCompletor(reader));
+		completors.add(new PathCompleter(hConsole));
 		reader.addCompleter(new ArgumentCompleter(completors));
 
 		String line;
-		FsShell shell = new FsShell();
+
 		PrintWriter out = new PrintWriter(reader.getOutput());
 		while ((line = reader.readLine()) != null) {
 			if (StringUtils.isEmpty(line)) {
@@ -153,10 +158,10 @@ public class HadoopConsole {
 			if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
 				break;
 			}
-			
+
 			out.println("\u001B[33m======>\u001B[0m\"" + line + "\"");
 			out.flush();
-			
+
 			String[] cmds = line.split("\\s");
 			runCmds(cmds, shell);
 		}
@@ -166,6 +171,13 @@ public class HadoopConsole {
 	private static void runCmds(String[] cmds, FsShell shell) {
 
 		if (StringUtils.equals(cmds[0], "fs")) {
+
+			// remove the hdfs 'h' prefix
+			for (int i = 1; i < cmds.length; i++) {
+				if (cmds[i].startsWith("h/")) {
+					cmds[i] = cmds[i].substring(1);
+				}
+			}
 			int res;
 			try {
 				res = ToolRunner.run(shell,

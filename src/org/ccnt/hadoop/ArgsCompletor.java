@@ -23,15 +23,14 @@ import java.util.List;
 
 import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
+import jline.console.completer.FileNameCompleter;
 import jline.console.ConsoleReader;
 
 class ArgsCompletor implements Completer {
-	private HadoopConsole hConsole;
 	private ConsoleReader reader;
 
-	public ArgsCompletor(HadoopConsole hConsole, ConsoleReader reader) {
+	public ArgsCompletor(ConsoleReader reader) {
 		this.reader = reader;
-		this.hConsole = hConsole;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -41,27 +40,23 @@ class ArgsCompletor implements Completer {
 		if (buffer == null) {
 			buffer = "";
 		}
-
 		buffer = buffer.substring(0, cursor);
 
 		// gaoxiao
 		// get pre Cmd
 		// String[] buffers = reader.getCursorBuffer().toString().split("\\s");
-
 		String preBuf = reader.getCursorBuffer().toString();
 		String[] buffers = preBuf.split("\\s");
-		ArgumentCompleter argumentCompleter = (ArgumentCompleter) reader
-				.getCompleters().toArray()[0];
 
-		int prevIndex = buffers.length - 2;
-		if (buffer == "") {
-			prevIndex = buffers.length - 1;
-		}
-		if (prevIndex < 0) {
-			prevIndex = 0;
-		}
+		// int prevIndex = buffers.length - 2;
+		// if (buffer == "") {
+		// prevIndex = buffers.length - 1;
+		// }
+		// if (prevIndex < 0) {
+		// prevIndex = 0;
+		// }
 		// System.out.println(prevIndex);
-		String preCmd = buffers[prevIndex];
+		String preCmd = buffers[0];
 		String token = "";
 		if (!buffer.endsWith(" ")) {
 			String[] tokens = buffer.split(" ");
@@ -85,10 +80,10 @@ class ArgsCompletor implements Completer {
 					candidates.add(cmd);
 				}
 			}
-		} else {
-			candidates.add("");
 		}
 
-		return buffer.lastIndexOf(" ") + 1;
+		// return buffer.lastIndexOf(" ") + 1;
+		return candidates.size() == 0 ? buffer.length() : buffer
+				.lastIndexOf("/") + 1;
 	}
 }
