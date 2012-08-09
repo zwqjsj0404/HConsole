@@ -150,6 +150,8 @@ public class HadoopConsole {
 
 		String line;
 
+		// run command with args
+		CommandRunner runner = new CommandRunner();
 		PrintWriter out = new PrintWriter(reader.getOutput());
 		while ((line = reader.readLine()) != null) {
 			if (StringUtils.isEmpty(line)) {
@@ -163,30 +165,8 @@ public class HadoopConsole {
 			out.flush();
 
 			String[] cmds = line.split("\\s");
-			runCmds(cmds, shell);
+			runner.run(cmds);
 		}
 
 	}
-
-	private static void runCmds(String[] cmds, FsShell shell) {
-
-		if (StringUtils.equals(cmds[0], "fs")) {
-
-			// remove the hdfs 'h' prefix
-			for (int i = 1; i < cmds.length; i++) {
-				if (cmds[i].startsWith("h/")) {
-					cmds[i] = cmds[i].substring(1);
-				}
-			}
-			int res;
-			try {
-				res = ToolRunner.run(shell,
-						Arrays.copyOfRange(cmds, 1, cmds.length));
-			} catch (Exception e) {
-				// TODO 当前不进行处理
-				e.printStackTrace();
-			}
-		}
-	}
-
 }
