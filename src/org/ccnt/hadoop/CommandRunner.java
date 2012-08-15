@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FsShell;
 import org.apache.hadoop.hdfs.tools.DFSAdmin;
+import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.util.ToolRunner;
 
 public class CommandRunner {
@@ -24,7 +25,18 @@ public class CommandRunner {
 			handleFsShell(args);
 		} else if (StringUtils.equals(topCmd, "dfsadmin")) {
 			handleDfsAdmin(args);
+		} else if (StringUtils.equals(topCmd, "job")) {
+			handleJobClient(args);
 		}
+	}
+
+	private void handleJobClient(String[] args) {
+		try {
+			ToolRunner.run(new JobClient(), args);
+		} catch (Exception e) {
+			// TODO 当前不进行处理
+			e.printStackTrace();
+		} 
 	}
 
 	private void handleDfsAdmin(String[] args) {
