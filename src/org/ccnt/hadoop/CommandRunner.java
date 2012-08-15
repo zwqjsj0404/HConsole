@@ -18,12 +18,6 @@ public class CommandRunner {
 	private void runCmds(String[] cmds) {
 
 		String topCmd = cmds[0];
-		// remove the hdfs 'hs' prefix
-		for (int i = 1; i < cmds.length; i++) {
-			if (cmds[i].startsWith("h/")) {
-				cmds[i] = cmds[i].substring(1);
-			}
-		}
 		String[] args = Arrays.copyOfRange(cmds, 1, cmds.length);
 
 		if (StringUtils.equals(topCmd, "fs")) {

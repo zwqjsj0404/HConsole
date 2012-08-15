@@ -22,6 +22,8 @@ import org.apache.hadoop.util.ToolRunner;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 /**
@@ -153,6 +155,8 @@ public class HadoopConsole {
 		// run command with args
 		CommandRunner runner = new CommandRunner();
 		PrintWriter out = new PrintWriter(reader.getOutput());
+		out.println("\u001B[33m=======>\u001B[0m\""
+				+ "to access hdfs, add h before /: 'h/', then use tab" + "\"");
 		while ((line = reader.readLine()) != null) {
 			if (StringUtils.isEmpty(line)) {
 				continue;
@@ -161,12 +165,32 @@ public class HadoopConsole {
 				break;
 			}
 
-			out.println("\u001B[33m======>\u001B[0m\"" + line + "\"");
+			String[] cmds = handleArgs(line);
+
+			out.println("\u001B[33m=======>\u001B[0m\""
+					+ Joiner.on(" ").join(cmds) + "\"");
 			out.flush();
 
-			String[] cmds = line.split("\\s");
 			runner.run(cmds);
 		}
 
+	}
+
+	private static String[] handleArgs(String line) {
+		// split the empty string
+		Iterable<String> cmdList = Splitter.on(" ").trimResults()
+				.omitEmptyStrings().split(line);
+		ArrayList<String> cmdArray = Lists.newArrayList(cmdList.iterator());
+		String[] cmds = (String[]) cmdArray
+				.toArray(new String[cmdArray.size()]);
+
+		// remove the hdfs 'hs' prefix
+		for (int i = 1; i < cmds.length; i++) {
+			if (cmds[i].startsWith("h/")) {
+				cmds[i] = cmds[i].substring(1);
+			}
+		}
+
+		return cmds;
 	}
 }

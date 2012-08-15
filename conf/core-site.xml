@@ -7,6 +7,7 @@
 	<property>
 		<name>fs.default.name</name>
 		<!-- <value>hdfs://192.168.92.132:9000</value> -->
-		<value>hdfs://localhost:9000</value>
+		<!-- <value>hdfs://localhost:9000</value> -->
+		<value>hdfs://mint13:9000</value>
 	</property>
 </configuration>
