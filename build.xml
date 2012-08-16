@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<project name ="targetPro" default="compile">
+	<property name="jar_name" value="hconsole.jar"/>
+	<property name="lib.dir" value="lib" />   
+	<property name="main-class" value="org.ccnt.hadoop.HadoopConsole"/>
+	<path id="compile.classpath">  
+		<fileset dir="${basedir}/lib">  
+			<include name="**/*.jar"/>  
+		</fileset>  
+	</path>  
+	<target name="clean">
+		<delete dir="${basedir}/bin"/>
+	</target>
+	<target name="compile" >
+		<mkdir dir ="${basedir}/bin"/>
+		<javac srcdir ="${basedir}/src" destdir ="${basedir}/bin">
+			<classpath refid="compile.classpath"/>  
+		</javac>
+	</target>
+	<target name="build"  depends="compile">
+		<fileset dir="${basedir}/lib" id="lib.dist.fileset">     
+			<include name="**/*.jar"/>     
+		</fileset>
+		<jar jarfile="${basedir}/${jar_name}" basedir="${basedir}/bin">
+			<manifest>   
+				<attribute name="Main-Class" value="${org.ccnt.hadoop.HadoopConsole}"/>   
+				<attribute name="Class-Path" value="."/>   
+			</manifest>   
+		</jar>
+	</target>
+</project>
