@@ -2,7 +2,8 @@ home=`dirname "$0"`
 home=`cd "$home"; pwd`
 
 # compile the src file
-ant  compile 1>/dev/null
+# ant  compile 1>/dev/null
+ant -f "$home/build.xml" compile  1>/dev/null
 
 if [ ! -e ~/".jline.rc" ]; then
   cp "$home/.jline.rc" ~/

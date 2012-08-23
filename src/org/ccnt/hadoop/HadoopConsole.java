@@ -1,6 +1,7 @@
 package org.ccnt.hadoop;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,71 +108,80 @@ public class HadoopConsole {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		HadoopConsole hConsole = new HadoopConsole();
 
 		// System.setProperty("jline.WindowsTerminal.directConsole", "false");
-		final ConsoleReader reader = new ConsoleReader();
-		// reader.setPrompt("hadoop> ");
-		reader.setPrompt("\u001B[32m@hadoop\u001B[0m> ");
+		final ConsoleReader reader;
+		try {
+			reader = new ConsoleReader();
+			// reader.setPrompt("hadoop> ");
+			reader.setPrompt("\u001B[32m@hadoop\u001B[0m> ");
 
-		final FileHistory history = new FileHistory(new File(historyFile));
-		reader.setHistory(history);
-		// 处理日志
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				try {
-					history.flush();
-				} catch (Exception ex) {
+			final FileHistory history = new FileHistory(new File(historyFile));
+			reader.setHistory(history);
+			// 处理日志
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					try {
+						history.flush();
+					} catch (Exception ex) {
+					}
 				}
-			}
-		});
+			});
 
-		// 处理信号量
-		SignalHandler handler = new SignalHandler() {
+			// 处理信号量
+			SignalHandler handler = new SignalHandler() {
 
-			public void handle(Signal signal) {
-				if (StringUtils.isEmpty(reader.getCursorBuffer().toString())) {
-					System.out
-							.print("\nType quit or exit, or use Ctrl + d to get out!");
-					System.out.print("\n" + reader.getPrompt());
-				} else {
-					reader.getCursorBuffer().clear();
-					System.out.print("\n" + reader.getPrompt());
+				public void handle(Signal signal) {
+					if (StringUtils
+							.isEmpty(reader.getCursorBuffer().toString())) {
+						System.out
+								.print("\nType quit or exit, or use Ctrl + d to get out!");
+						System.out.print("\n" + reader.getPrompt());
+					} else {
+						reader.getCursorBuffer().clear();
+						System.out.print("\n" + reader.getPrompt());
+					}
 				}
-			}
-		};
-		Signal.handle(new Signal("INT"), handler);
+			};
+			Signal.handle(new Signal("INT"), handler);
 
-		List completors = new LinkedList();
-		completors.add(new HadoopCompletor(hConsole));
-		completors.add(new ArgsCompletor(reader));
-		completors.add(new PathCompleter(hConsole));
-		reader.addCompleter(new ArgumentCompleter(completors));
+			List completors = new LinkedList();
+			completors.add(new HadoopCompletor(hConsole));
+			completors.add(new ArgsCompletor(reader));
+			completors.add(new PathCompleter(hConsole));
+			reader.addCompleter(new ArgumentCompleter(completors));
 
-		String line;
+			String line;
 
-		// run command with args
-		CommandRunner runner = new CommandRunner();
-		PrintWriter out = new PrintWriter(reader.getOutput());
-		out.println("\u001B[33m=======>\u001B[0m\""
-				+ "to access hdfs, add h before /: 'h/', then use tab" + "\"");
-		while ((line = reader.readLine()) != null) {
-			if (StringUtils.isEmpty(line)) {
-				continue;
-			}
-			if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
-				break;
-			}
-
-			String[] cmds = handleArgs(line);
-
+			// run command with args
+			CommandRunner runner = new CommandRunner();
+			PrintWriter out = new PrintWriter(reader.getOutput());
 			out.println("\u001B[33m=======>\u001B[0m\""
-					+ Joiner.on(" ").join(cmds) + "\"");
-			out.flush();
+					+ "to access hdfs, add h before /: 'h/', then use tab"
+					+ "\"");
+			while ((line = reader.readLine()) != null) {
+				if (StringUtils.isEmpty(line)) {
+					continue;
+				}
+				if (line.equalsIgnoreCase("quit")
+						|| line.equalsIgnoreCase("exit")) {
+					break;
+				}
 
-			runner.run(cmds);
+				String[] cmds = handleArgs(line);
+
+				out.println("\u001B[33m=======>\u001B[0m\""
+						+ Joiner.on(" ").join(cmds) + "\"");
+				out.flush();
+
+				runner.run(cmds);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

@@ -8,6 +8,10 @@
 		<name>fs.default.name</name>
 		<!-- <value>hdfs://192.168.92.132:9000</value> -->
 		<!-- <value>hdfs://localhost:9000</value> -->
-		<value>hdfs://192.168.1.121:9000</value>
+		<value>hdfs://localhost:9003</value>
+	</property>
+	<property>
+		<name>ipc.client.connect.max.retries</name>
+		<value>1</value>
 	</property>
 </configuration>
